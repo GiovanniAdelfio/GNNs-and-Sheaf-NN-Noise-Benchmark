@@ -12,7 +12,9 @@ The full benchmarking framework (training loop, dataset loading, evaluation pipe
 |---|---|
 | `model/SheafNN.py` | Implementation of the Sheaf Neural Network model |
 | `methods/SheafNNHelper.py` | Method helper that integrates SheafNN into the benchmark framework |
+| `methods/Sheaf_graphcleaner.py` | Method helper that integrates SheafNN into the benchmark framework while allowing graphcleaner processing|
 | `model/methods/SheafNNTrainer.py` | Trainer class for SheafNN |
+| `model/methods/sheaf_graphcleaner.py` | Trainer class for SheafNN which uses graphcleaner before training |
 | `util/laplacian_builder.py` | Utility to build the Sheaf Laplacian |
 | `config.yaml` | Example configuration file |
 
