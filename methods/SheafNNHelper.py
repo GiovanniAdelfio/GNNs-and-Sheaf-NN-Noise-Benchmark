@@ -62,4 +62,4 @@ class SheafNNHelper(MethodHelper):
 
     # Optional: enable mini-batch training
     def supports_batched_training(self):
-        return False  # default is False
+        return True  # default is False
