@@ -11,6 +11,8 @@ The full benchmarking framework (training loop, dataset loading, evaluation pipe
 | File | Description |
 |---|---|
 | `model/SheafNN.py` | Implementation of the Sheaf Neural Network model |
+| `model/SheafNNLight.py` | Implementation of the Sheaf Neural Network model in a lighter version than the original |
+| `model/SheafNNBodnar.py` | Implementation of the Sheaf Neural Network model based on Bodnar Paper, with novel implemntations |
 | `methods/SheafNNHelper.py` | Method helper that integrates SheafNN into the benchmark framework |
 | `methods/Sheaf_graphcleaner.py` | Method helper that allows for graphcleaner processing|
 | `model/methods/SheafNNTrainer.py` | Trainer class for SheafNN |
