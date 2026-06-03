@@ -27,7 +27,12 @@ def initialize_experiment(config, run_id=1):
     device = torch.device(config.get('device', 'cuda') if torch.cuda.is_available() else 'cpu')
 
     # Dataset
-    data, num_classes = load_dataset(config['dataset'].get('name', 'cora'), root=config['dataset'].get('root', './data'))
+    normalize = config['dataset'].get('normalize', True)
+    data, num_classes = load_dataset(
+        config['dataset'].get('name', 'cora'),
+        root=config['dataset'].get('root', './data'),
+        normalize=normalize
+    )
     if not isinstance(data, Data):
         data = data[0]
     data = data.to(device)
@@ -125,10 +130,24 @@ def initialize_experiment(config, run_id=1):
         n_layers=config['model'].get('n_layers', 2),
         dropout=config['model'].get('dropout', 0.5),
         self_loop=config['model'].get('self_loop', True),
-        #added for SheafNN:
+        use_residual=config['model'].get('use_residual', False),
+        normalization=config['model'].get('normalization', 'layer'),
+        jk=config['model'].get('jk', 'none'),
+        # gcn_modified-only knobs (ignored by other backbones)
+        pre_linear=config['model'].get('pre_linear', False),
+        lin_res=config['model'].get('lin_res', False),
+        mod_norm=config['model'].get('mod_norm', 'none'),
+        pre_ln=config['model'].get('pre_ln', False),
+        inner_gnn=config['model'].get('inner_gnn', 'gcn'),
+        # Sheaf-only knobs (ignored by other backbones)
         stalk=config['model'].get('stalk', 1),
         MLP_maps=config['model'].get('MLP_maps', True),
-        mlp_hidden_channels=config['model'].get('mlp_hidden_channels', [32, 32, 32])
+        mlp_hidden_channels=config['model'].get('mlp_hidden_channels', [32, 32, 32]),
+        NWP = config['model'].get('NWP', False),
+        non_linear=config['model'].get('non_linear', False),
+        act=config['model'].get('act', 'F.elu'),
+        ego = config['model'].get('ego', False), 
+        norm_info=config['model'].get('norm_info', None)
     ).to(device)
 
     compute_info = {
