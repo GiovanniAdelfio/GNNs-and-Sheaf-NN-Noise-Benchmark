@@ -67,7 +67,7 @@ def get_model(model_name, in_channels, hidden_channels, out_channels, **kwargs):
                                         'pre_ln', 'pre_linear', 'lin_res', 'mod_norm',
                                         'jk', 'inner_gnn']),
         'sheafnn': (SheafNN, ['n_layers', 'dropout', 'mlp_layers', 'MLP_maps', 'mlp_hidden_channels', 'stalk', 'act']),
-        "sheafnn_bodnar": (SheafNN_Bodnar, ['n_layers', 'dropout_in', 'dropout', 'stalk', 'non_linear', 'ego', 'act', 'norm_info']),
+        "sheafnn_bodnar": (SheafNN_Bodnar, ['n_layers', 'dropout_in', 'dropout', 'stalk', 'non_linear', 'ego', 'act', 'norm_info', 'attention']),
         "sheafnn_light": (SheafNN_Light, ['n_layers', 'dropout_in', 'dropout', 'stalk', 'act'])
     }
 

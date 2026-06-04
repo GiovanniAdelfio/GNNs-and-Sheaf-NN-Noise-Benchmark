@@ -147,7 +147,8 @@ def initialize_experiment(config, run_id=1):
         non_linear=config['model'].get('non_linear', False),
         act=config['model'].get('act', 'F.elu'),
         ego = config['model'].get('ego', False), 
-        norm_info=config['model'].get('norm_info', None)
+        norm_info=config['model'].get('norm_info', None),
+        attention=config['model'].get('attention', False)
     ).to(device)
 
     compute_info = {
