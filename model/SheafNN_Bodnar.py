@@ -11,10 +11,10 @@ from model.gnns import MLP
 class SheafNN_Bodnar(nn.Module):
     """
     An implementation which follows directly the orthogonal maps implementation of the Sheaf by Bodnar.
-    1. It has a first linear layer+ activation which makes an embedding of the input features, dim in_channels --> hidden_channels which must be divisible by stalk;
-    2. initialization of the linear layer for generation of the restriction maps on the forward based on the concatenation of the nodes' features;
+    1. It has a first2 layer MLP which makes an embedding of the input features, dim in_channels --> hidden_channels which must be divisible by stalk;
+    2. initialization of the linear layer for generation of the restriction maps on the forward, based on the concatenation of the nodes' features;
     3. generate the Laplacian and apply diffusion for n_layer times;
-    4. finally I apply the linear layer out to generate the probability vectors form the final embeddings, dim hidden_channels --> out_channels;
+    4. finally I apply the linear layer out to generate the probability vectors from the final embeddings, dim hidden_channels --> out_channels;
     """
     def __init__(self, in_channels: int, hidden_channels: int, out_channels: int, 
                  n_layers: int = 2, 
@@ -24,7 +24,8 @@ class SheafNN_Bodnar(nn.Module):
                  non_linear: bool = False,
                  ego: bool = False,
                  act: str = 'F.elu',
-                 norm_info: dict = {}):
+                 norm_info: dict = {},
+                 attention :bool = False):
         
         super().__init__()
         assert hidden_channels % stalk == 0, "Hidden channels must be divisible by the stalk dimension"
@@ -35,7 +36,12 @@ class SheafNN_Bodnar(nn.Module):
         self.n_layers = n_layers  
         self.non_linear = non_linear
         self.ego = ego
-        
+        self.attention = attention
+
+        self.attention_layer = None
+        if self.attention:
+            self.attention_layer = nn.Linear(2 * hidden_channels, 1)
+
         norm_info = norm_info or {'is_norm': False, 'norm_type': 'LayerNorm'}
         self.is_norm = norm_info['is_norm']
         self.norm_type = getattr(nn, norm_info['norm_type']) if self.is_norm else None
@@ -101,7 +107,14 @@ class SheafNN_Bodnar(nn.Module):
             A = params.tril(diagonal=-1) + eye
             
             # Chiamata alla libreria C++ ottimizzata
-            return torch_householder_orgqr(A)
+            A = torch_householder_orgqr(A)
+            
+            if self.attention:
+                attn_scores = self.attention_layer(embed)
+                attn_scores = 2 * torch.sigmoid(attn_scores)
+                A = A * attn_scores.reshape(-1, 1, 1)
+            
+            return A
 
 
     def _diffusion(self, x): 
@@ -165,9 +178,11 @@ class SheafNN_Bodnar(nn.Module):
 
     def forward(self, data):
         x = self._forward_body(data)
+
         if self.ego:
             x = self.emb_out_1(x)
             x = self.act(x)
+
             x = F.dropout(x, p=self.dropout, training=self.training)
             x = self.emb_out_2(x)
         else:
@@ -175,6 +190,9 @@ class SheafNN_Bodnar(nn.Module):
         return x
 
     def initialize(self):
+            
+            if self.attention and self.attention_layer is not None:
+                self.attention_layer.reset_parameters()
 
             for module in self.MLP_in.modules():
                 if hasattr(module, 'reset_parameters'):
