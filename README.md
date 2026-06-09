@@ -1,6 +1,7 @@
 # GNNs and Sheaf Neural Network — Noise Benchmark
 
 This repository contains my personal contributions to a benchmark study on the robustness of Graph Neural Networks (GNNs) and Sheaf Neural Networks under various noise conditions, evaluated on node classification tasks.
+The content of these repository have been moved and from now onward will be updated only on https://github.com/wanifarooq/Gnn_Noise_Robustness_Benchmarking/tree/sheaf
 
 ## Context
 
